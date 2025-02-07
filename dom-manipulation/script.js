@@ -32,7 +32,7 @@ function createAddQuoteForm() {
     document.body.appendChild(formContainer);
 
     document.getElementById("addQuote").addEventListener("click", addQuote);
-    document.getElementById("exportQuotes").addEventListener("click", exportQuotes);
+    document.getElementById("exportQuotes").addEventListener("click", exportToJsonFile);
 }
 
 document.addEventListener("DOMContentLoaded", createAddQuoteForm);
@@ -54,11 +54,11 @@ function addQuote() {
 }
 
 // Function to export quotes as a JSON file
-function exportQuotes() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(quotes));
+function exportToJsonFile() {
+    const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
     const downloadAnchor = document.createElement("a");
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "quotes.json");
+    downloadAnchor.href = URL.createObjectURL(blob);
+    downloadAnchor.download = "quotes.json";
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     document.body.removeChild(downloadAnchor);
