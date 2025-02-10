@@ -1,4 +1,3 @@
-
 const quotes = JSON.parse(localStorage.getItem("quotes")) || [
     { text: "The only way to do great work is to love what you do.", category: "Motivation" },
     { text: "Life is what happens when you're busy making other plans.", category: "Life" },
@@ -88,6 +87,23 @@ async function fetchQuotesFromServer() {
         }
     } catch (error) {
         console.error("Error fetching quotes from server:", error);
+    }
+}
+
+// Function to sync local quotes with the server
+async function syncQuotes() {
+    try {
+        // Fetch latest quotes from the server
+        await fetchQuotesFromServer();
+
+        // Sync newly added quotes from local storage to the server
+        for (const quote of quotes) {
+            await syncWithServer(quote);
+        }
+
+        console.log("Quotes synchronized successfully.");
+    } catch (error) {
+        console.error("Error during synchronization:", error);
     }
 }
 
