@@ -102,6 +102,7 @@ async function syncQuotes() {
         }
 
         console.log("Quotes synchronized successfully.");
+        alert("Quotes synced with server!");
     } catch (error) {
         console.error("Error during synchronization:", error);
     }
