@@ -83,3 +83,66 @@ function importFromJsonFile(event) {
     };
     fileReader.readAsText(event.target.files[0]);
 }
+const quotes = JSON.parse(localStorage.getItem("quotes")) || [
+    { text: "The only way to do great work is to love what you do.", category: "Motivation" },
+    { text: "Life is what happens when you're busy making other plans.", category: "Life" },
+    { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", category: "Success" }
+];
+
+// Function to save quotes to local storage
+function saveQuotes() {
+    localStorage.setItem("quotes", JSON.stringify(quotes));
+}
+
+// Function to populate categories dynamically
+function populateCategories() {
+    const categoryFilter = document.getElementById("categoryFilter");
+    categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+    
+    const categories = [...new Set(quotes.map(q => q.category))];
+    categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+    });
+    
+    const lastSelectedCategory = localStorage.getItem("selectedCategory") || "all";
+    categoryFilter.value = lastSelectedCategory;
+}
+
+// Function to filter quotes based on the selected category
+function filterQuotes() {
+    const selectedCategory = document.getElementById("categoryFilter").value;
+    localStorage.setItem("selectedCategory", selectedCategory);
+    
+    const filteredQuotes = selectedCategory === "all" ? quotes : quotes.filter(q => q.category === selectedCategory);
+    
+    const quoteDisplay = document.getElementById("quoteDisplay");
+    quoteDisplay.innerHTML = filteredQuotes.map(q => `<p>${q.text} - <em>${q.category}</em></p>`).join(" ");
+}
+
+// Function to add a new quote and update categories
+function addQuote() {
+    const newText = document.getElementById("newQuoteText").value.trim();
+    const newCategory = document.getElementById("newQuoteCategory").value.trim();
+    
+    if (newText !== "" && newCategory !== "") {
+        quotes.push({ text: newText, category: newCategory });
+        saveQuotes();
+        populateCategories();
+        filterQuotes();
+        
+        document.getElementById("newQuoteText").value = "";
+        document.getElementById("newQuoteCategory").value = "";
+        alert("Quote added successfully!");
+    } else {
+        alert("Please enter both a quote and a category.");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    createAddQuoteForm();
+    populateCategories();
+    filterQuotes();
+});
